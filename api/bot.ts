@@ -1,4 +1,4 @@
-import { Bot, InlineKeyboard } from 'grammy';
+import { Bot, webhookCallback } from 'grammy';
 import { ENV } from '../src/config';
 import { marketplaceHandler } from '../src/handlers/marketplace';
 import { gameHandler } from '../src/handlers/game';
