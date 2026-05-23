@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id              BigInt   @id
+  username        String?
+  name            String?
+  reputation      Int      @default(0)
+  health          Int      @default(100)
+  tonWallet       String?
+  scene           String   @default("start")
+
+  day1CompletedAt DateTime?
+  day2CompletedAt DateTime?
+  
+  inventory    InventoryItem[]
+  listings     MarketplaceListing[]
+  processedTx     ProcessedTransaction[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model InventoryItem {
+  id         String   @id @default(uuid())
+  userId     BigInt
+  user       User     @relation(fields: [userId], references: [id])
+  itemId     String   // ID предмета
+  acquiredAt DateTime @default(now())
+}
+
+model MarketplaceListing {
+  id          String   @id @default(uuid())
+  sellerId    BigInt
+  seller      User     @relation(fields: [sellerId], references: [id])
+  itemId      String   
+  priceTon    Float    
+  status      String   @default("ACTIVE") // ACTIVE, SOLD, CANCELLED
+  createdAt   DateTime @default(now())
+}
+
+model ProcessedTransaction {
+  hash      String   @id
+  amountTon Float
+  userId    BigInt
+  purpose   String
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id]) // <--- ВОТ ЭТО НУЖНО ДОБАВИТЬ
+}
